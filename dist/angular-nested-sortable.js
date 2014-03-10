@@ -712,7 +712,7 @@
                 targetElm = targetItem.sortableItemElement;
 
                 var targetItemData = null;
-                if (targetItem) {
+                if (targetItem && targetItem.itemData) {
                   targetItemData = targetItem.itemData();
                 }
 
