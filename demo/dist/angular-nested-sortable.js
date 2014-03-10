@@ -7,7 +7,6 @@
   'use strict';
 
   angular.module('ui.nestedSortable', [])
-
     .constant('nestedSortableConfig', {
       listClass: 'nestedSortable-list',
       itemClass: 'nestedSortable-item',
@@ -24,18 +23,61 @@
   'use strict';
 
   angular.module('ui.nestedSortable')
-  
+
+   /**
+    * @ngdoc service
+    * @name ui.nestedSortable.service:$helper
+    * @requires ng.$document
+    * @requires ng.$window
+    *
+    * @description
+    * Angular-NestedSortable.
+    */
     .factory('$helper', ['$document', '$window',
       function ($document, $window) {
         return {
+
+        /**
+         * @ngdoc method
+         * @name hippo.theme#height
+         * @methodOf ui.nestedSortable.service:$helper
+         *
+         * @description
+         * Get the height of an element.
+         *
+         * @param {Object} element Angular element.
+         * @returns {String} Height
+         */
           height: function (element) {
             return element.prop('scrollHeight');
           },
 
+        /**
+         * @ngdoc method
+         * @name hippo.theme#width
+         * @methodOf ui.nestedSortable.service:$helper
+         *
+         * @description
+         * Get the width of an element.
+         *
+         * @param {Object} element Angular element.
+         * @returns {String} Width
+         */
           width: function (element) {
             return element.prop('scrollWidth');
           },
 
+        /**
+         * @ngdoc method
+         * @name hippo.theme#offset
+         * @methodOf ui.nestedSortable.service:$helper
+         *
+         * @description
+         * Get the offset values of an element.
+         *
+         * @param {Object} element Angular element.
+         * @returns {Object} Object with properties width, height, top and left
+         */
           offset: function (element) {
             var boundingClientRect = element[0].getBoundingClientRect();
 
@@ -47,6 +89,18 @@
               };
           },
 
+        /**
+         * @ngdoc method
+         * @name hippo.theme#positionStarted
+         * @methodOf ui.nestedSortable.service:$helper
+         *
+         * @description
+         * Get the start position of the target element according to the provided event properties.
+         *
+         * @param {Object} e Event
+         * @param {Object} target Target element
+         * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
+         */
           positionStarted: function (e, target) {
             var pos = {};
             pos.offsetX = e.pageX - this.offset(target).left;
@@ -649,7 +703,8 @@
                   dragElm.show();
                 }
 
-                if (targetElm.attr('sortable-elment-type') != 'item' && targetElm.attr('sortable-elment-type') != 'handle') {
+                if (targetElm.attr('sortable-elment-type') != 'item' && targetElm.attr('sortable-elment-type') != 'handle'
+                    && targetElm.attr('ui-nested-sortable') === undefined) {
                   return;
                 }
 
@@ -661,8 +716,8 @@
                   targetItemData = targetItem.itemData();
                 }
 
-                // move vertical
-                if (!pos.dirAx) {
+                // move vertical, only if not an empty model
+                if (!pos.dirAx && targetElm) {
                   sameParent = false;
                   // check it's new position
                   var targetOffset = $helper.offset(targetElm);
@@ -715,6 +770,11 @@
               if (dragElm) {
                 if (e) {
                   e.preventDefault();
+                }
+
+                // Allow insertion into empty sortable model
+                if (!targetScope && targetItem.insertSortableItem) {
+                  targetScope = targetItem;
                 }
 
                 // roll back elements changed

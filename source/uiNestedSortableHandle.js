@@ -247,7 +247,8 @@
                   dragElm.show();
                 }
 
-                if (targetElm.attr('sortable-elment-type') != 'item' && targetElm.attr('sortable-elment-type') != 'handle') {
+                if (targetElm.attr('sortable-elment-type') != 'item' && targetElm.attr('sortable-elment-type') != 'handle'
+                    && targetElm.attr('ui-nested-sortable') === undefined) {
                   return;
                 }
 
@@ -259,8 +260,8 @@
                   targetItemData = targetItem.itemData();
                 }
 
-                // move vertical
-                if (!pos.dirAx) {
+                // move vertical, only if not an empty model
+                if (!pos.dirAx && targetElm) {
                   sameParent = false;
                   // check it's new position
                   var targetOffset = $helper.offset(targetElm);
@@ -313,6 +314,11 @@
               if (dragElm) {
                 if (e) {
                   e.preventDefault();
+                }
+
+                // Allow insertion into empty sortable model
+                if (!targetScope && targetItem.insertSortableItem) {
+                  targetScope = targetItem;
                 }
 
                 // roll back elements changed
