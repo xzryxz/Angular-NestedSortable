@@ -1,5 +1,5 @@
 {
-  "name": "angular-nestedsortable",
+  "name": "angular-nested-sortable",
   "version": "1.3.5",
   "dependencies": {
     "grunt": "~0.4.2",
